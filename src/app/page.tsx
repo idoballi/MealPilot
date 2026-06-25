@@ -120,6 +120,8 @@ export default function Home() {
     const validationErrors = validate(form);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      setStatus("idle");
+      document.getElementById("form")?.scrollIntoView({ behavior: "smooth" });
       return;
     }
 
