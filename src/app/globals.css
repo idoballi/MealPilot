@@ -8,6 +8,20 @@
   }
 
   body {
-    @apply bg-slate-50 text-slate-900 antialiased;
+    @apply bg-white text-pilot-dark antialiased;
+  }
+}
+
+@layer components {
+  .pilot-card {
+    @apply rounded-2xl bg-white shadow-lg ring-1 ring-black/5;
+  }
+
+  .pilot-input {
+    @apply w-full rounded-xl border border-pilot-100 bg-white px-4 py-3 text-base text-pilot-dark outline-none transition focus:border-pilot-500 focus:ring-2 focus:ring-pilot-100;
+  }
+
+  .pilot-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-pilot-500 px-8 py-4 text-lg font-bold text-white shadow-lg shadow-pilot-500/25 transition hover:bg-pilot-600 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
   }
 }
