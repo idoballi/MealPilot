@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 type FormData = {
   fullName: string;
@@ -101,7 +102,28 @@ const inputClass =
   "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-base outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100";
 
 export default function Home() {
-  const [form, setForm] = useState<FormData>(initialForm);
+  return (
+    <Suspense
+      fallback={
+        <main className="mx-auto max-w-lg px-4 py-16 text-center text-slate-600">
+          טוען...
+        </main>
+      }
+    >
+      <HomePage />
+    </Suspense>
+  );
+}
+
+function HomePage() {
+  const searchParams = useSearchParams();
+  const emailFromUrl = searchParams.get("email")?.trim() ?? "";
+  const isUpdateMode = Boolean(emailFromUrl);
+
+  const [form, setForm] = useState<FormData>(() => ({
+    ...initialForm,
+    email: emailFromUrl,
+  }));
   const [errors, setErrors] = useState<FormErrors>({});
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
     "idle"
@@ -144,7 +166,7 @@ export default function Home() {
 
       if (!res.ok) throw new Error("Webhook failed");
       setStatus("success");
-      setForm(initialForm);
+      setForm(isUpdateMode ? { ...initialForm, email: emailFromUrl } : initialForm);
     } catch {
       setStatus("error");
     }
@@ -213,7 +235,9 @@ export default function Home() {
 
       {/* Form */}
       <section id="form" className="py-8">
-        <h2 className="mb-2 text-xl font-bold text-slate-900">העדפות אישיות</h2>
+        <h2 className="mb-2 text-xl font-bold text-slate-900">
+          {isUpdateMode ? "עדכון העדפות" : "העדפות אישיות"}
+        </h2>
         <p className="mb-6 text-sm text-slate-600">
           מלא פעם אחת — ותקבל תפריט יומי למייל.
         </p>
@@ -460,7 +484,11 @@ export default function Home() {
             disabled={status === "loading"}
             className="w-full rounded-2xl bg-brand-600 px-6 py-4 text-lg font-bold text-white shadow-lg shadow-brand-600/25 transition hover:bg-brand-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {status === "loading" ? "שולח..." : "שמור לי תוכנית"}
+            {status === "loading"
+              ? "שולח..."
+              : isUpdateMode
+                ? "שמור עדכונים"
+                : "שמור לי תוכנית"}
           </button>
         </form>
       </section>
