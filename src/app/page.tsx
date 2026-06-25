@@ -123,12 +123,6 @@ export default function Home() {
       return;
     }
 
-    const webhookUrl = process.env.NEXT_PUBLIC_MAKE_WEBHOOK_URL;
-    if (!webhookUrl) {
-      setStatus("error");
-      return;
-    }
-
     setStatus("loading");
     setErrors({});
 
@@ -140,7 +134,7 @@ export default function Home() {
     };
 
     try {
-      const res = await fetch(webhookUrl, {
+      const res = await fetch("/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
